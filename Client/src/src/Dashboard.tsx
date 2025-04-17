@@ -14,11 +14,15 @@ import { useState } from "react";
 import { IoCopyOutline } from "react-icons/io5";
 import { LuLoaderCircle } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
-import { useRoom } from "@/context/roomContext";
+import { useRoom } from "@/context/RoomContext";
+import toast from "react-hot-toast";
 
 export function Dashboard() {
   const navigate = useNavigate();
-  const { roomCode, setRoomCode } = useRoom();
+  const { roomCode, setRoomCode, setUserName } = useRoom();
+
+  const [name, setName] = useState(""); // ← your user’s name
+  const [enteredCode, setEnteredCode] = useState(""); // ← code to join
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -46,16 +50,18 @@ export function Dashboard() {
   };
 
   const handleCreateRoom = () => {
-    if (!roomCode) {
-      generateRoomCode(); // Ensure it's generated
-      setTimeout(() => {
-        navigate("/");
-      }, 1100);
-    } else {
+    if (!name.trim() || !enteredCode.trim()) {
+      toast.error("Name and Room code is required");
+      return;
+    }
+    {
+      // Set userName from the name input field
+      setUserName(name.trim());
+      setRoomCode(enteredCode.trim());
       navigate("/chat");
     }
   };
-  
+
   return (
     <div className="h-screen relative">
       {/* Top-right corner toggle */}
@@ -91,9 +97,17 @@ export function Dashboard() {
               )}
             </Button>
 
-            <Input placeholder="Enter your name" />
+            <Input
+              placeholder="Enter your name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
             <div className="flex gap-2">
-              <Input placeholder="Enter Room Code" />
+              <Input
+                placeholder="Enter Room Code"
+                value={enteredCode}
+                onChange={(e) => setEnteredCode(e.target.value)}
+              />
               <Button
                 variant="outline"
                 className="text-lg w-30 bg-black text-white border border-gray-800 hover:bg-gray-900 dark:bg-white dark:text-black dark:border-gray-300 dark:hover:bg-gray-100 pl-5 pr-5"
