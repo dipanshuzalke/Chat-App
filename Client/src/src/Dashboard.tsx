@@ -38,20 +38,19 @@ export function Dashboard() {
         ); // Randomly pick a character
       }
       setRoomCode(code);
+      setEnteredCode(code);
       setLoading(false);
     }, 1000);
-  };
-
-  const handleCopy = () => {
-    // @ts-ignore
-    navigator.clipboard.writeText(roomCode);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1500);
   };
 
   const handleCreateRoom = () => {
     if (!name.trim() || !enteredCode.trim()) {
       toast.error("Name and Room code is required");
+      return;
+    }
+    // Ensure exactly 6 chars A–Z or 0–9
+    if (!/^[A-Z0-9]{6}$/.test(enteredCode)) {
+      toast.error("Room code must be exactly 6 letters or digits");
       return;
     }
     {
@@ -62,8 +61,15 @@ export function Dashboard() {
     }
   };
 
+  const handleCopy = () => {
+    // @ts-ignore
+    navigator.clipboard.writeText(roomCode);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  };
+
   return (
-    <div className="h-screen relative">
+    <div className="h-screen relative px-4 sm:px-6">
       {/* Top-right corner toggle */}
       <div className="absolute top-4 right-4 z-10">
         <ModeToggle />
@@ -71,7 +77,7 @@ export function Dashboard() {
 
       {/* Centered content */}
       <div className="h-full flex items-center justify-center">
-        <Card className="rounded-xl border w-[40%]">
+        <Card className="w-full max-w-md sm:max-w-lg md:w-[60%] lg:w-[40%] rounded-xl border">
           <CardHeader>
             <div className="flex items-center gap-2">
               <IoChatbubbleOutline className="text-2xl" />
@@ -81,16 +87,17 @@ export function Dashboard() {
               Temporary room that expires after all users exit
             </CardDescription>
           </CardHeader>
+
           <CardContent className="flex flex-col gap-3">
             <Button
               className="text-xl bg-black text-white border border-gray-800 hover:bg-gray-900 dark:bg-white dark:text-black dark:border-gray-300 dark:hover:bg-gray-100 p-5"
               onClick={generateRoomCode}
-              disabled={loading} // Disable button while loading
+              disabled={loading}
             >
               {loading ? (
                 <>
                   <LuLoaderCircle className="animate-spin mr-2 h-5 w-5" />
-                  Creating...
+                  Creating Room...
                 </>
               ) : (
                 "Create New Room"
@@ -102,26 +109,39 @@ export function Dashboard() {
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
-            <div className="flex gap-2">
+
+            <div className="w-full flex gap-2 sm:flex-row">
               <Input
                 placeholder="Enter Room Code"
                 value={enteredCode}
-                onChange={(e) => setEnteredCode(e.target.value)}
+                onChange={(e) => {
+                  // Uppercase + strip non A–Z0–9, up to 6 chars
+                  const sanitized = e.target.value
+                    .toUpperCase()
+                    .replace(/[^A-Z0-9]/g, "")
+                    .slice(0, 6);
+                  setEnteredCode(sanitized);
+                }}
+                maxLength={6}
+                className="sm:flex-1"
               />
               <Button
                 variant="outline"
-                className="text-lg w-30 bg-black text-white border border-gray-800 hover:bg-gray-900 dark:bg-white dark:text-black dark:border-gray-300 dark:hover:bg-gray-100 pl-5 pr-5"
+                className="text-lg bg-black text-white border border-gray-800 hover:bg-gray-900 
+               dark:bg-white dark:text-black dark:border-gray-300 dark:hover:bg-gray-100 
+               px-6"
                 onClick={handleCreateRoom}
               >
                 Join Room
               </Button>
             </div>
           </CardContent>
-          {/* Display the generated room code */}{" "}
+
+          {/* Display the generated room code */}
           {roomCode && (
-            <CardFooter className="flex justify-center backdrop-blur-md bg-white/10 border rounded-lg p-4 ml-6 mr-5">
-              <div className="flex flex-col items-center gap-2 justify-center">
-                <div>Share this code with your friend: </div>
+            <CardFooter className="flex justify-center backdrop-blur-md bg-white/10 border rounded-lg p-4 mx-4 mt-2">
+              <div className="flex flex-col items-center gap-2">
+                <div>Share this code with your friend:</div>
                 <div className="flex items-center gap-2">
                   <span className="text-2xl font-mono">{roomCode}</span>
                   <Button

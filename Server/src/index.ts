@@ -19,8 +19,23 @@ wss.on("connection", (socket) => {
       if (parsedMessage.type === "join") {
         const { roomId, userName } = parsedMessage.payload;
 
+        // Check if username already exists in the room
+        const isDuplicate = allSockets.some(
+          (user) => user.room === roomId && user.userName === userName
+        );
+
+        if (isDuplicate) {
+          socket.send(
+            JSON.stringify({
+              type: "error",
+              payload: { message: "Username already exists in the room." },
+            })
+          );
+          return; // Don't proceed further
+        }
+
         // Prevent duplicate user entries (e.g., on refresh)
-        allSockets = allSockets.filter(user => user.socket !== socket);
+        allSockets = allSockets.filter((user) => user.socket !== socket);
 
         // Add new user
         allSockets.push({ socket, room: roomId, userName });
@@ -31,20 +46,31 @@ wss.on("connection", (socket) => {
           .map((user) => user.userName);
 
         // Send user list to the new user
-        socket.send(JSON.stringify({
-          type: "user-list",
-          payload: { users: usersInRoom },
-        }));
+        socket.send(
+          JSON.stringify({
+            type: "user-list",
+            payload: { users: usersInRoom },
+          })
+        );
 
         // Broadcast to others in the same room that a new user joined
         allSockets.forEach((user) => {
           if (user.room === roomId && user.socket !== socket) {
-            user.socket.send(JSON.stringify({
-              type: "user-joined",
-              payload: { userName },
-            }));
+            user.socket.send(
+              JSON.stringify({
+                type: "user-joined",
+                payload: { userName },
+              })
+            );
           }
         });
+        // 🎉 Send success toast to the user joining
+        socket.send(
+          JSON.stringify({
+            type: "success",
+            payload: { message: "Successfully joined the room!" },
+          })
+        );
       }
 
       if (parsedMessage.type === "chat") {
@@ -53,13 +79,15 @@ wss.on("connection", (socket) => {
 
         allSockets.forEach((user) => {
           if (user.room === sender.room) {
-            user.socket.send(JSON.stringify({
-              type: "chat",
-              payload: {
-                userName: sender.userName,
-                message: parsedMessage.payload.message,
-              },
-            }));
+            user.socket.send(
+              JSON.stringify({
+                type: "chat",
+                payload: {
+                  userName: sender.userName,
+                  message: parsedMessage.payload.message,
+                },
+              })
+            );
           }
         });
       }
@@ -80,10 +108,12 @@ wss.on("connection", (socket) => {
       // Inform others in the same room
       allSockets.forEach((user) => {
         if (user.room === room) {
-          user.socket.send(JSON.stringify({
-            type: "user-left",
-            payload: { userName },
-          }));
+          user.socket.send(
+            JSON.stringify({
+              type: "user-left",
+              payload: { userName },
+            })
+          );
         }
       });
 
