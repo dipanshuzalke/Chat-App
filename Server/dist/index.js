@@ -41,6 +41,11 @@ wss.on("connection", (socket) => {
                         }));
                     }
                 });
+                // 🎉 Send success toast to the user joining
+                socket.send(JSON.stringify({
+                    type: "success",
+                    payload: { message: "Successfully joined the room!" },
+                }));
             }
             if (parsedMessage.type === "chat") {
                 const sender = allSockets.find((u) => u.socket === socket);

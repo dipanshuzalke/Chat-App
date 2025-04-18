@@ -127,9 +127,9 @@ export function Dashboard() {
               />
               <Button
                 variant="outline"
-                className="text-lg bg-black text-white border border-gray-800 hover:bg-gray-900 
-               dark:bg-white dark:text-black dark:border-gray-300 dark:hover:bg-gray-100 
-               px-6"
+                className="text-lg bg-black text-white border border-gray-800 hover:text-white hover:bg-gray-900
+             dark:bg-white dark:text-black dark:border-gray-300 dark:hover:bg-gray-100
+             px-6"
                 onClick={handleCreateRoom}
               >
                 Join Room

@@ -144,9 +144,9 @@ function Chat() {
   };
 
   return (
-    <Card className="rounded-xl border w-full max-w-2xl mx-auto mt-4 sm:mt-2 relative">
+    <Card className="rounded-xl border w-full max-w-2xl mx-auto mt-4 sm:mt-2">
       {/* Top-right corner toggle */}
-      <div className="absolute top-0.5 sm:top-2 right-4 z-10">
+      <div className="absolute top-5 sm:top-4 right-4 z-10">
         <ModeToggle />
       </div>
 
