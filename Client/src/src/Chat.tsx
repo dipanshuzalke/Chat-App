@@ -61,7 +61,7 @@ function Chat() {
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
-    const ws = new WebSocket(import.meta.env.VITE_WS_SERVER);
+    const ws = new WebSocket("ws://localhost:8080");
     wsRef.current = ws;
 
     ws.onopen = () => {
