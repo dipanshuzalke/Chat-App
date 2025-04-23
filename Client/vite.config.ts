@@ -10,8 +10,5 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  base: "/",
-  server: {
-    historyApiFallback: true, // This is for dev only
-  },
+  base: "/"
 });
