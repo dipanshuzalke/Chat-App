@@ -1,14 +1,10 @@
 // tailwind.config.js
 module.exports = {
-  darkMode: 'class', // Enable dark mode using class strategy
-  content: [
-    './index.html',
-    './src/**/*.{js,ts,jsx,tsx}',
-  ],
+  darkMode: 'class', // Enable dark mode with class-based toggling
   theme: {
     extend: {
       fontFamily: {
-        mono: ["'JetBrains Mono'", 'monospace'],
+        mono: ["'JetBrains Mono'", "monospace"], // Custom monospace font
       },
     },
   },

@@ -30,19 +30,20 @@ function Chat() {
   const { roomCode, userName } = useRoom();
   const [copied, setCopied] = useState(false);
 
-  const handleCopy = () => {
-    // @ts-ignore
-    navigator.clipboard.writeText(roomCode);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1500);
-  };
-
-  // Redirect to “/” if context is empty (e.g. on page refresh)
+  // Redirect to “/” if missing after refresh
   useEffect(() => {
     if (!roomCode || !userName) {
       navigate("/", { replace: true });
     }
   }, [roomCode, userName, navigate]);
+
+  const handleCopy = () => {
+    if (roomCode) {
+      navigator.clipboard.writeText(roomCode);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    }
+  };
 
   const [messages, setMessages] = useState<Message[]>([
     // {
@@ -61,6 +62,7 @@ function Chat() {
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
+    if (!roomCode || !userName) return;
     const ws = new WebSocket("wss://chat-app-server-7bzr.onrender.com");
     wsRef.current = ws;
 
