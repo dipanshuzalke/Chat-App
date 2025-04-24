@@ -144,7 +144,8 @@ function Chat() {
   };
 
   return (
-    <Card className="h-[98vh] overflow-y-auto rounded-xl border w-full max-w-2xl mx-auto mt-2 sm:mt-2">
+    <Card className="h-[98vh] overflow-y-auto rounded-xl border w-full max-w-2xl mx-auto mt-2cd Client
+     sm:mt-2">
       {/* Top-right corner toggle */}
       <div className="absolute top-5 sm:top-4 right-4 z-10">
         <ModeToggle />
